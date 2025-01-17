@@ -1,4 +1,5 @@
 import numpy as np
+import matplotlib.pyplot as plt
 
 class Objeto(): 
   def __init__(self):
@@ -48,6 +49,35 @@ def homogeneasParaCartesianasDoMundo(matrizHomogenea):
       
   return matrizHomogenea[:2]
 
+def janelaParaViewport(matrizCartesianaDoMundo, janela, viewport):
+    # Limites da janela (mundo)
+    x_wmin, y_wmin, x_wmax, y_wmax = janela
+
+    # Limites da viewport (tela)
+    x_vmin, y_vmin, x_vmax, y_vmax = viewport
+
+    # Convertendo cada ponto
+    matrizViewport = []
+    for x, y in zip(matrizCartesianaDoMundo[0], matrizCartesianaDoMundo[1]):
+        x_v = x_vmin + ((x - x_wmin) / (x_wmax - x_wmin)) * (x_vmax - x_vmin)
+        y_v = y_vmin + ((y - y_wmin) / (y_wmax - y_wmin)) * (y_vmax - y_vmin)
+        matrizViewport.append([x_v, y_v])
+    
+    return np.array(matrizViewport).T  # Transpor para manter a estrutura original
+
+# def plotarObjeto(matrizViewport):
+#     x = matrizViewport[0]
+#     y = matrizViewport[1]
+    
+#     plt.figure(figsize=(6, 6))
+#     plt.scatter(x, y, color='blue')  # Plota os pontos
+#     plt.plot(x, y, color='red')      # Plota as linhas conectando os pontos
+#     plt.title("Projeção do Objeto na Viewport")
+#     plt.xlabel("X")
+#     plt.ylabel("Y")
+#     plt.grid()
+#     plt.show()
+
 
 def main():
   objeto = Objeto()
@@ -65,5 +95,9 @@ def main():
   
   matrizCartesianaDoMundo = homogeneasParaCartesianasDoMundo(matrizLinhaObjeto)
 
-  print(matrizCartesianaDoMundo)
+  # Transformação janela-viewport
+  janela = [-10, -10, 10, 10]  # Limites do mundo (ajuste conforme necessário)
+  viewport = [0, 0, 500, 500]  # Resolução da tela (500x500 px)
+  matrizViewport = janelaParaViewport(matrizCartesianaDoMundo, janela, viewport)
+
 main()
