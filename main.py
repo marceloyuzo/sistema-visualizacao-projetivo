@@ -3,11 +3,11 @@ import matplotlib.pyplot as plt
 
 class Objeto(): 
    def __init__(self):
-      self.NV = 5
-      self.matriz = np.array([[1, 7, 7, 1, 4], [1, 1, 1, 1, 7], [1, 1, 7, 7, 4], [1, 1, 1, 1, 1]], dtype=float)
-      self.NS = 5
-      self.NVPS = np.array([4, 3, 3, 3, 3], dtype=float)
-      self.VS = [[4, 3, 5, 4], [3, 2, 5, 3], [5, 2, 1, 5], [4, 5, 1, 4], [4, 1, 2, 3, 4]]
+      self.NV = 5 # Número de vértices
+      self.matriz = np.array([[1, 7, 7, 1, 4], [1, 1, 1, 1, 7], [1, 1, 7, 7, 4], [1, 1, 1, 1, 1]], dtype=float) # Matriz do objeto
+      self.NS = 5 # Número de superficies
+      self.NVPS = np.array([4, 3, 3, 3, 3], dtype=float) # Número de vértices por superfície
+      self.VS = [[4, 3, 5, 4], [3, 2, 5, 3], [5, 2, 1, 5], [4, 5, 1, 4], [4, 1, 2, 3, 4]] # Vértices de cada superfície
 
 def calcularVetorNormal(pontoA, pontoB, pontoC):
    vetorAB = np.array(pontoB, dtype=float) - np.array(pontoA, dtype=float)
@@ -117,13 +117,16 @@ def main():
    objeto = Objeto()
 
    # INPUT DE ENTRADA
-   pontoVista = [20, 10, 30]
+   print("Digite as coordenadas do ponto de vista:")
+   pontoVista = list(map(float, input("Digite x, y, z (separados por espaço): ").split()))
 
-   # Vetor normal ao plano Z = 0 (FIXO)
-   vetorNormal = np.array([0, 0, 1], dtype=float)
+   print("Digite as coordenadas dos pontos p1, p2, p3 para definição de um plano:")
+   p1 = list(map(float, input("Digite x, y, z para p1 (separados por espaço): ").split()))
+   p2 = list(map(float, input("Digite x, y, z para p2 (separados por espaço): ").split()))
+   p3 = list(map(float, input("Digite x, y, z para p3 (separados por espaço): ").split()))
 
-   # Ponto sobre o plano Z = 0 (FIXO)
-   pontoPlano = np.array([0, 0, 0], dtype=float)
+   vetorNormal = calcularVetorNormal(p1, p2, p3)
+   pontoPlano = p2
 
    matrizPerspectiva = calcularMatrizPerspectiva(pontoVista, vetorNormal, pontoPlano)
 
@@ -132,10 +135,9 @@ def main():
    matrizCartesianaDoMundo = homogeneasParaCartesianasDoMundo(matrizLinhaObjeto)
 
    # Transformação janela-viewport
-   janela = [-7, -5, 9, 7]  # Limites do mundo (ajuste conforme necessário)
-   viewport = [0, 0, 32, 24]  # Resolução do dispositivo 32px x 24px
+   janela = [-7, -5, 9, 7]
+   viewport = [0, 0, 32, 24]
    matrizJanelaViewport = janelaParaViewport(matrizCartesianaDoMundo, janela, viewport)
-   print(matrizJanelaViewport)
 
    plotarObjetoComArestas(matrizJanelaViewport, objeto.VS)
 
