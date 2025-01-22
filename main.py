@@ -69,7 +69,7 @@ def homogeneasParaCartesianasDoMundo(matrizHomogenea):
          linha[i] = teste
 
    matrizCartesianaDoMundo = matrizHomogenea[:2]
-   matrizCartesianaDoMundo[1] = -matrizCartesianaDoMundo[1]
+   # matrizCartesianaDoMundo[1] = -matrizCartesianaDoMundo[1]
          
    return matrizCartesianaDoMundo
 
@@ -90,16 +90,22 @@ def janelaParaViewport(matrizCartesianaDoMundo, janela, viewport):
 
    if(aspectRatioJanela > aspectRatioViewport):
       v_maxNovo = ((u_max - u_min) / aspectRatioJanela) + v_min
-
-      matrizViewport = [[Sx, 0, u_min - (Sx * x_min)], [0, -Sy, (Sy * y_max) + (v_max / 2) - (v_maxNovo / 2) + v_min], [0, 0, 1]]
+      matrizViewport = [
+         [Sx, 0, u_min - (Sx * x_min)], 
+         [0, -Sy, (Sy * y_max) + (v_max / 2) - (v_maxNovo / 2) + v_min], 
+         [0, 0, 1]
+      ]
    
-   if(aspectRatioJanela < aspectRatioViewport):
+   elif(aspectRatioJanela < aspectRatioViewport):
       u_maxNovo = aspectRatioJanela * (v_max - v_min) + u_min
+      matrizViewport = [
+         [Sx, 0, (-Sx * x_min) + (u_max / 2) - (u_maxNovo / 2) + u_min], 
+         [0, -Sy, (Sy * y_max) + v_min], 
+         [0, 0, 1]
+      ]
 
-      matrizViewport = [[Sx, 0, (-Sx * x_min) + (u_max / 2) - (u_maxNovo / 2) + u_min], [0, -Sy, (Sy * y_max) + v_min], [0, 0, 1]]
-
-   if(aspectRatioJanela == aspectRatioViewport):
-      matrizViewport = [[Sx, 0, u_min - (Sx * x_min)], [0, -Sy, (Sy * y_max) + v_min ], [0, 0, 1]]
+   else:
+      matrizViewport = [[Sx, 0, u_min - (Sx * x_min)], [0, Sy, v_min - (Sy * y_min) ], [0, 0, 1]]
 
    matrizViewport = np.array(matrizViewport, dtype=float)
 
@@ -107,7 +113,6 @@ def janelaParaViewport(matrizCartesianaDoMundo, janela, viewport):
    matrizCartesianaDoMundoAtualizada = np.vstack([matrizCartesianaDoMundo, novaLinha])
 
    return np.dot(matrizViewport, matrizCartesianaDoMundoAtualizada)
-
 
 def plotarObjetoComArestas(matrizViewport, conexoes):
     plt.figure(figsize=(8, 6))
@@ -172,6 +177,7 @@ def main():
    janela = [-7, -5, 9, 7]
    viewport = [0, 0, 32, 24]
    matrizJanelaViewport = janelaParaViewport(matrizCartesianaDoMundo, janela, viewport)
+   print(matrizJanelaViewport)
 
    plotarObjetoComArestas(matrizJanelaViewport, objeto.VS)
 
