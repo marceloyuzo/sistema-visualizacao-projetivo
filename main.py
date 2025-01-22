@@ -1,7 +1,7 @@
 import numpy as np
 import matplotlib.pyplot as plt
 
-class Objeto(): 
+class ObjetoPiramide(): 
    def __init__(self):
       self.NV = 5 # Número de vértices
       self.matriz = np.array([[1, 7, 7, 1, 4], [1, 1, 1, 1, 7], [1, 1, 7, 7, 4], [1, 1, 1, 1, 1]], dtype=float) # Matriz do objeto
@@ -9,9 +9,31 @@ class Objeto():
       self.NVPS = np.array([4, 3, 3, 3, 3], dtype=float) # Número de vértices por superfície
       self.VS = [[4, 3, 5, 4], [3, 2, 5, 3], [5, 2, 1, 5], [4, 5, 1, 4], [4, 1, 2, 3, 4]] # Vértices de cada superfície
 
+class ObjetoCubo(): 
+    def __init__(self):
+        self.NV = 8  # Número de vértices
+        # Matriz com as coordenadas dos vértices de um cubo
+        self.matriz = np.array([
+            [1, 1, 1, 1, -1, -1, -1, -1],  # X
+            [1, 1, -1, -1, 1, 1, -1, -1],  # Y
+            [1, -1, -1, 1, 1, -1, -1, 1],   # Z
+            [1, 1, 1, 1, 1, 1, 1, 1]        # Homogeneização
+        ], dtype=float)
+        
+        self.NS = 6  # Número de superfícies (faces do cubo)
+        self.NVPS = np.array([4, 4, 4, 4, 4, 4], dtype=float)  # Número de vértices por superfície
+        self.VS = [
+            [1, 2, 3, 4],  # Face frontal
+            [5, 6, 7, 8],  # Face traseira
+            [1, 2, 6, 5],  # Face inferior
+            [2, 3, 7, 6],  # Face direita
+            [3, 4, 8, 7],  # Face superior
+            [4, 1, 5, 8]   # Face esquerda
+        ]  # Vértices de cada superfície (faces do cubo)
+
 def calcularVetorNormal(pontoA, pontoB, pontoC):
    vetorAB = np.array(pontoB, dtype=float) - np.array(pontoA, dtype=float)
-   vetorCB = np.array(pontoC, dtype=float) - np.array(pontoB, dtype=float)
+   vetorCB = np.array(pontoB, dtype=float) - np.array(pontoC, dtype=float)
 
    vetorNormal = np.cross(vetorAB, vetorCB)
 
@@ -106,24 +128,36 @@ def plotarObjetoComArestas(matrizViewport, conexoes):
 
     # Configurações do gráfico
     plt.title("Objeto no Sistema Viewport")
-    plt.xlabel("X")
-    plt.ylabel("Y")
     plt.grid(True)
     plt.axis("equal")
     plt.legend()
     plt.show()
 
 def main():
-   objeto = Objeto()
+   print("Escolha o objeto para renderizar:")
+   print("1 - Cubo")
+   print("2 - Pirâmide")
+   escolha = int(input("Digite o número da opção desejada (1 ou 2): "))
+   
+   if escolha == 1:
+      objeto = ObjetoCubo()
+   elif escolha == 2:
+      objeto = ObjetoPiramide()
+   else:
+      print("Opção inválida!")
+      return
 
    # INPUT DE ENTRADA
    print("Digite as coordenadas do ponto de vista:")
    pontoVista = list(map(float, input("Digite x, y, z (separados por espaço): ").split()))
 
-   print("Digite as coordenadas dos pontos p1, p2, p3 para definição de um plano:")
-   p1 = list(map(float, input("Digite x, y, z para p1 (separados por espaço): ").split()))
-   p2 = list(map(float, input("Digite x, y, z para p2 (separados por espaço): ").split()))
-   p3 = list(map(float, input("Digite x, y, z para p3 (separados por espaço): ").split()))
+   # print("Digite as coordenadas dos pontos p1, p2, p3 para definição de um plano:")
+   # p1 = list(map(float, input("Digite x, y, z para p1 (separados por espaço): ").split()))
+   # p2 = list(map(float, input("Digite x, y, z para p2 (separados por espaço): ").split()))
+   # p3 = list(map(float, input("Digite x, y, z para p3 (separados por espaço): ").split()))
+   p1 = [1, 0, 0]
+   p2 = [0, 0, 0]
+   p3 = [0, 1, 0]
 
    vetorNormal = calcularVetorNormal(p1, p2, p3)
    pontoPlano = p2
