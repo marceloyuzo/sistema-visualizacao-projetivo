@@ -69,7 +69,7 @@ def homogeneasParaCartesianasDoMundo(matrizHomogenea):
          linha[i] = teste
 
    matrizCartesianaDoMundo = matrizHomogenea[:2]
-   # matrizCartesianaDoMundo[1] = -matrizCartesianaDoMundo[1]
+   matrizCartesianaDoMundo[1] = -matrizCartesianaDoMundo[1]
          
    return matrizCartesianaDoMundo
 
@@ -97,7 +97,7 @@ def janelaParaViewport(matrizCartesianaDoMundo, janela, viewport):
       ]
    
    elif(aspectRatioJanela < aspectRatioViewport):
-      u_maxNovo = aspectRatioJanela * (v_max - v_min) + u_min
+      u_maxNovo = (aspectRatioJanela * (v_max - v_min)) + u_min
       matrizViewport = [
          [Sx, 0, (-Sx * x_min) + (u_max / 2) - (u_maxNovo / 2) + u_min], 
          [0, -Sy, (Sy * y_max) + v_min], 
@@ -105,7 +105,11 @@ def janelaParaViewport(matrizCartesianaDoMundo, janela, viewport):
       ]
 
    else:
-      matrizViewport = [[Sx, 0, u_min - (Sx * x_min)], [0, Sy, v_min - (Sy * y_min) ], [0, 0, 1]]
+      matrizViewport = [
+         [Sx, 0, -(Sx * x_min)], 
+         [0, -Sy, -(Sy * y_min) ], 
+         [0, 0, 1]
+      ]
 
    matrizViewport = np.array(matrizViewport, dtype=float)
 
@@ -139,10 +143,12 @@ def plotarObjetoComArestas(matrizViewport, conexoes):
     plt.show()
 
 def main():
+   ############### INPUT DE ENTRADA ####################
    print("Escolha o objeto para renderizar:")
    print("1 - Cubo")
    print("2 - Pirâmide")
    escolha = int(input("Digite o número da opção desejada (1 ou 2): "))
+   # escolha = 2
    
    if escolha == 1:
       objeto = ObjetoCubo()
@@ -152,7 +158,6 @@ def main():
       print("Opção inválida!")
       return
 
-   # INPUT DE ENTRADA
    print("Digite as coordenadas do ponto de vista:")
    pontoVista = list(map(float, input("Digite x, y, z (separados por espaço): ").split()))
 
@@ -164,6 +169,12 @@ def main():
    p2 = [0, 0, 0]
    p3 = [0, 1, 0]
 
+   # Transformação janela-viewport
+   janela = [-7, -5, 9, 7]
+   viewport = [0, 0, 32, 24]
+
+
+
    vetorNormal = calcularVetorNormal(p1, p2, p3)
    pontoPlano = p2
 
@@ -173,11 +184,7 @@ def main():
    
    matrizCartesianaDoMundo = homogeneasParaCartesianasDoMundo(matrizLinhaObjeto)
 
-   # Transformação janela-viewport
-   janela = [-7, -5, 9, 7]
-   viewport = [0, 0, 32, 24]
    matrizJanelaViewport = janelaParaViewport(matrizCartesianaDoMundo, janela, viewport)
-   print(matrizJanelaViewport)
 
    plotarObjetoComArestas(matrizJanelaViewport, objeto.VS)
 
